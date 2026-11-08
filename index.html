@@ -85,6 +85,11 @@ nav.tabs a .n { font: 500 0.75rem var(--mono); color: var(--muted); margin-left:
 .chip.toggle[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
 .chip.toggle[aria-pressed="false"] { text-decoration: none; opacity: 1; }
 .filters select { border: 1.5px solid var(--line); background: var(--surface); border-radius: 999px; padding: 5px 10px; font-size: 0.88rem; max-width: 220px; min-width: 0; }
+.filters .orgin { border: 1.5px solid var(--line); background: var(--surface); border-radius: 999px; padding: 5px 12px; font-size: 0.88rem; width: 230px; max-width: 100%; min-width: 0; }
+.filters .orgin:focus { border-color: var(--accent); outline: none; }
+.filters .orgin.on { border-color: var(--accent); background: var(--accent-soft); font-weight: 600; }
+.orglinks { display: flex; flex-wrap: wrap; gap: 4px 6px; }
+.orglinks button { border: 0; background: none; padding: 0; color: var(--accent); cursor: pointer; text-align: left; text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--accent) 40%, transparent); font: inherit; }
 .filters .reset { border: 0; background: none; color: var(--accent); cursor: pointer; font-weight: 600; font-size: 0.88rem; padding: 4px 6px; }
 .sep { width: 1px; height: 22px; background: var(--line); }
 
@@ -234,6 +239,7 @@ footer.foot { border-top: 1px solid var(--line); padding-block: 18px 28px; color
   .hour { grid-template-columns: 50px minmax(0, 1fr); gap: 8px; }
   .hour > .h { font-size: 0.82rem; }
   .filters select { max-width: 46vw; }
+  .filters .orgin { width: 100%; }
   .sep { display: none; }
 }
 @media (max-width: 520px) {
@@ -302,7 +308,7 @@ footer.foot { border-top: 1px solid var(--line); padding-block: 18px 28px; color
 
   var DATA = null, INFO = null, EVENTS = [], BY_ID = {};
   var state = {
-    view: "calendar", q: "", src: { u: true, w: true, a: true }, zone: "", kind: "", topic: "",
+    view: "calendar", q: "", src: { u: true, w: true, a: true }, zone: "", kind: "", topic: "", org: "",
     live: false, hideTent: false, day: CONF_START, listLimit: PAGE
   };
   var shortlist = loadShort();
@@ -335,12 +341,15 @@ footer.foot { border-top: 1px solid var(--line); padding-block: 18px 28px; color
     return { terms: terms, neg: neg };
   }
   var PQ = { terms: [], neg: [] };
+  var ORGQ = { t: "", n: "" };
+  function setOrg(v) { state.org = v; var t = fold(v.trim()); ORGQ = { t: t, n: t.replace(/[^a-z0-9]/g, "") }; }
 
   function matches(e, ignoreDay) {
     if (!e.s.some(function (s) { return state.src[s]; })) return false;
     if (state.zone && (e.z || "Location TBC") !== state.zone) return false;
     if (state.kind && e.k !== state.kind) return false;
     if (state.topic && !(e.tp || []).includes(state.topic)) return false;
+    if (ORGQ.t && e._org.indexOf(ORGQ.t) < 0 && !(ORGQ.n.length > 2 && e._orgns.indexOf(ORGQ.n) >= 0)) return false;
     if (state.live && !(e.l && e.l.watch)) return false;
     if (state.hideTent && e.f && e.f.some(function (f) { return f === "unconfirmed" || f === "cancelled"; })) return false;
     for (var i = 0; i < PQ.terms.length; i++) if (e._h.indexOf(PQ.terms[i]) < 0) return false;
@@ -363,6 +372,8 @@ footer.foot { border-top: 1px solid var(--line); padding-block: 18px 28px; color
   // ---------------------------------------------------------------- rendering pieces
   var STAR = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2l2.7 5.6 6.1.8-4.5 4.2 1.1 6.1L12 17l-5.4 2.9 1.1-6.1-4.5-4.2 6.1-.8z" fill="currentColor"/></svg>';
   var STAR_O = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2l2.7 5.6 6.1.8-4.5 4.2 1.1 6.1L12 17l-5.4 2.9 1.1-6.1-4.5-4.2 6.1-.8z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>';
+
+  function orgNames(e) { return (e.o || "").split(/;\s*/).map(function (x) { return x.trim(); }).filter(function (x) { return x && x.toLowerCase() !== "tbc"; }); }
 
   function tagsHtml(e, withSrc) {
     var h = "";
@@ -387,12 +398,14 @@ footer.foot { border-top: 1px solid var(--line); padding-block: 18px 28px; color
 
   // ---------------------------------------------------------------- filters bar
   function buildFilters() {
-    var counts = { u: 0, w: 0, a: 0 }, zones = {}, kinds = {}, topics = {};
+    var counts = { u: 0, w: 0, a: 0 }, zones = {}, kinds = {}, topics = {}, orgs = {};
     EVENTS.forEach(function (e) {
       e.s.forEach(function (s) { counts[s]++; });
       var z = e.z || "Location TBC"; zones[z] = (zones[z] || 0) + 1;
       kinds[e.k] = (kinds[e.k] || 0) + 1;
       (e.tp || []).forEach(function (t) { topics[t] = (topics[t] || 0) + 1; });
+      orgNames(e).forEach(function (o) { orgs[o] = (orgs[o] || 0) + 1; });
+      if (/pavilion/i.test(e.v || "")) orgs[e.v] = (orgs[e.v] || 0) + 1;
     });
     function opts(obj, all, min) {
       return '<option value="">' + all + "</option>" + Object.keys(obj).filter(function (k) { return obj[k] >= (min || 1); })
@@ -407,6 +420,8 @@ footer.foot { border-top: 1px solid var(--line); padding-block: 18px 28px; color
     h += '<select id="f-zone" aria-label="Zone">' + opts(zones, "All zones") + "</select>";
     h += '<select id="f-kind" aria-label="Event type">' + opts(kinds, "All event types") + "</select>";
     h += '<select id="f-topic" aria-label="Topic">' + opts(topics, "All topics", 8) + "</select>";
+    h += '<input id="f-org" class="orgin" type="search" list="orglist" placeholder="Organiser or pavilion…" autocomplete="off" aria-label="Filter by organiser or pavilion"><datalist id="orglist">' +
+      Object.keys(orgs).sort(function (a, b) { return orgs[b] - orgs[a] || a.localeCompare(b); }).map(function (k) { return '<option value="' + esc(k) + '">' + orgs[k] + " event" + (orgs[k] === 1 ? "" : "s") + "</option>"; }).join("") + "</datalist>";
     h += '<button type="button" class="chip toggle" id="f-live" aria-pressed="false">Livestreamed</button>';
     h += '<button type="button" class="chip toggle" id="f-tent" aria-pressed="false">Hide unconfirmed & cancelled</button>';
     h += '<button type="button" class="reset" id="f-reset" hidden>Reset filters</button>';
@@ -416,8 +431,9 @@ footer.foot { border-top: 1px solid var(--line); padding-block: 18px 28px; color
   function syncFilters() {
     ["u", "w", "a"].forEach(function (s) { $('[data-src="' + s + '"]').setAttribute("aria-pressed", state.src[s]); });
     $("#f-zone").value = state.zone; $("#f-kind").value = state.kind; $("#f-topic").value = state.topic;
+    var fo = $("#f-org"); if (document.activeElement !== fo && fo.value !== state.org) fo.value = state.org; fo.classList.toggle("on", !!state.org);
     $("#f-live").setAttribute("aria-pressed", state.live); $("#f-tent").setAttribute("aria-pressed", state.hideTent);
-    var dirty = state.zone || state.kind || state.topic || state.live || state.hideTent || !state.src.u || !state.src.w || !state.src.a;
+    var dirty = state.zone || state.kind || state.topic || state.org || state.live || state.hideTent || !state.src.u || !state.src.w || !state.src.a;
     $("#f-reset").hidden = !dirty;
     $("#qclear").hidden = !state.q;
   }
@@ -426,9 +442,9 @@ footer.foot { border-top: 1px solid var(--line); padding-block: 18px 28px; color
   function filtered() { return EVENTS.filter(function (e) { return matches(e); }); }
 
   function banner(list) {
-    if (!state.q && !state.topic && !state.kind && !state.zone && !state.live) return "";
+    if (!state.q && !state.topic && !state.kind && !state.zone && !state.live && !state.org) return "";
     var days = new Set(list.map(function (e) { return e.d; })).size;
-    var what = state.q ? "“" + esc(state.q) + "”" : "these filters";
+    var what = state.q && !state.org ? "“" + esc(state.q) + "”" : state.org && !state.q ? "organiser “" + esc(state.org) + "”" : "your search and filters";
     return '<div class="banner"><span><strong>' + list.length.toLocaleString() + "</strong> events match " + what + " across " + days + " day" + (days === 1 ? "" : "s") + ".</span>" +
       (state.view === "calendar" ? '<button type="button" data-go="list">See them all as a list</button>' : '<button type="button" data-go="calendar">Show on the calendar</button>') + "</div>";
   }
@@ -575,7 +591,10 @@ footer.foot { border-top: 1px solid var(--line); padding-block: 18px 28px; color
     if (L.doc) extra += '<a class="btn" href="' + esc(L.doc) + '" target="_blank" rel="noopener">Document ↗</a>';
     var g = gcalLink(e), o = outlookLink(e);
     var rows = [["When", fmtDay(e.d, true) + (e.d ? " · " + timeRange(e) + " (Antalya)" : "")], ["Where", [e.v, e.z].filter(Boolean).join(" · ") || "To be confirmed"], ["Type", e.k], ["Organisers", e.o], ["Speakers", e.sp]]
-      .filter(function (r) { return r[1]; }).map(function (r) { return "<dt>" + r[0] + "</dt><dd>" + highlight(r[1]) + "</dd>"; }).join("");
+      .filter(function (r) { return r[1]; }).map(function (r) {
+        if (r[0] === "Organisers" && orgNames(e).length) return '<dt>Organisers</dt><dd class="orglinks">' + orgNames(e).map(function (o) { return '<button type="button" data-org="' + esc(o) + '" title="Show everything this organiser runs">' + highlight(o) + "</button>"; }).join("") + "</dd>";
+        return "<dt>" + r[0] + "</dt><dd>" + highlight(r[1]) + "</dd>";
+      }).join("");
     var html = '<div class="dlg"><header><h2 id="dlg-title">' + highlight(e.t) + '</h2><button class="x" type="button" data-close aria-label="Close">×</button></header>' +
       '<div class="tags">' + tagsHtml(e) + "</div>" +
       "<dl>" + rows + "</dl>" +
@@ -615,6 +634,12 @@ footer.foot { border-top: 1px solid var(--line); padding-block: 18px 28px; color
     render();
   }
 
+  function jumpToMatch() {
+    if (state.view !== "calendar") return;
+    var list = filtered(), first = list.filter(function (e) { return e.d; })[0];
+    if (first && !list.some(function (e) { return e.d === state.day; })) state.day = first.d;
+  }
+
   function goDay(d) { state.day = d; state.view = "calendar"; setHash(d ? "day-" + d : "calendar"); render(); window.scrollTo({ top: 0 }); }
 
   function measureHeader() {
@@ -630,10 +655,7 @@ footer.foot { border-top: 1px solid var(--line); padding-block: 18px 28px; color
       qT = setTimeout(function () {
         state.q = ev.target.value.trim(); PQ = parseQuery(state.q); state.listLimit = PAGE;
         if (state.view === "info" && state.q) { state.view = "list"; setHash("list"); }
-        if (state.view === "calendar" && state.q) {
-          var first = filtered().filter(function (e) { return e.d; })[0], onDay = filtered().some(function (e) { return e.d === state.day; });
-          if (!onDay && first) state.day = first.d;
-        }
+        if (state.q) jumpToMatch();
         render();
       }, 160);
     });
@@ -644,11 +666,18 @@ footer.foot { border-top: 1px solid var(--line); padding-block: 18px 28px; color
       if (b.dataset.src) { state.src[b.dataset.src] = !state.src[b.dataset.src]; if (!state.src.u && !state.src.w && !state.src.a) state.src[b.dataset.src] = true; }
       else if (b.id === "f-live") state.live = !state.live;
       else if (b.id === "f-tent") state.hideTent = !state.hideTent;
-      else if (b.id === "f-reset") { state.src = { u: true, w: true, a: true }; state.zone = state.kind = state.topic = ""; state.live = state.hideTent = false; }
+      else if (b.id === "f-reset") { state.src = { u: true, w: true, a: true }; state.zone = state.kind = state.topic = ""; setOrg(""); state.live = state.hideTent = false; }
       state.listLimit = PAGE; render();
+    });
+    var oT;
+    $("#filters").addEventListener("input", function (ev) {
+      if (ev.target.id !== "f-org") return;
+      clearTimeout(oT);
+      oT = setTimeout(function () { setOrg(ev.target.value); state.listLimit = PAGE; jumpToMatch(); render(); }, 200);
     });
     $("#filters").addEventListener("change", function (ev) {
       var id = ev.target.id;
+      if (id === "f-org") return;
       if (id === "f-zone") state.zone = ev.target.value; else if (id === "f-kind") state.kind = ev.target.value; else if (id === "f-topic") state.topic = ev.target.value;
       state.listLimit = PAGE; render();
     });
@@ -669,6 +698,8 @@ footer.foot { border-top: 1px solid var(--line); padding-block: 18px 28px; color
       if (t.closest("[data-close]")) { $("#dlg").close(); return; }
       var topic = t.closest("[data-topic]");
       if (topic) { state.topic = topic.dataset.topic; state.view = state.view === "info" ? "list" : state.view; $("#dlg").close(); render(); return; }
+      var org = t.closest("[data-org]");
+      if (org) { setOrg(org.dataset.org); $("#f-org").value = state.org; if (state.view === "info") state.view = "list"; $("#dlg").close(); state.listLimit = PAGE; jumpToMatch(); render(); return; }
       var day = t.closest("[data-day]"); if (day && !t.closest("#dlg")) { goDay(day.dataset.day); return; }
       var step = t.closest("[data-step]"); if (step) { goDay(addDays(state.day, +step.dataset.step)); return; }
       var go = t.closest("[data-go]"); if (go) { state.view = go.dataset.go; setHash(go.dataset.go); render(); window.scrollTo({ top: 0 }); return; }
@@ -693,6 +724,8 @@ footer.foot { border-top: 1px solid var(--line); padding-block: 18px 28px; color
     EVENTS.forEach(function (e) {
       BY_ID[e.id] = e;
       HASHID[e.id.replace(/[^A-Za-z0-9-]/g, "")] = e.id;
+      e._org = fold([e.o, /pavilion/i.test(e.v || "") ? e.v : ""].join(" \u0001 "));
+      e._orgns = e._org.replace(/[^a-z0-9]/g, "");
       e._h = fold([e.t, e.o, e.sp, e.v, e.z, e.k, e.x, (e.tp || []).join(" "), e.s.map(function (s) { return SRC[s].name; }).join(" ")].join(" \u0001 "));
     });
     var today = new Date().toLocaleDateString("en-CA", { timeZone: "Europe/Istanbul" });

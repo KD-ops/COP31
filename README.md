@@ -14,7 +14,7 @@ When the same event appears in more than one source it is shown once, tagged wit
 
 - **Calendar**: a November month grid with event counts per day, and an hour-by-hour agenda for the selected day, headed by the Presidency's theme for that day.
 - **Keyword search**: searches titles, organisations, speakers, pavilions, rooms, topics and descriptions. Use quotes for phrases (`"loss and damage"`) and a minus sign to exclude (`finance -press`). The calendar updates to show which days have matches.
-- **Filters**: source, zone, event type, topic, livestreamed only, hide unconfirmed or cancelled.
+- **Filters**: source, zone, event type, topic, organiser or pavilion (type-ahead, e.g. `SB COP`, `We Mean Business`), livestreamed only, hide unconfirmed or cancelled. Organiser names in event details are clickable and apply the same filter.
 - **Event details**: links back to the source, registration, livestream, organiser page, and one-click *Add to Google Calendar* / *Add to Outlook*.
 - **My shortlist**: star events to keep them in a personal list (stored in your browser only).
 - **Key info**: about COP31, key dates, daily themes, what is being negotiated, and useful official links.
