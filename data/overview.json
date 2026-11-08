@@ -1,0 +1,92 @@
+{
+  "checked": "2026-11-08",
+  "about": {
+    "text": "COP31 is the United Nations Climate Change Conference taking place in Antalya, Türkiye from 9 to 20 November 2026. It is the 31st meeting of the Conference of the Parties to the UN Framework Convention on Climate Change (UNFCCC), alongside CMP 21 (Kyoto Protocol), CMA 8 (Paris Agreement) and the 65th sessions of the subsidiary bodies (SBSTA 65 and SBI 65).",
+    "facts": [
+      ["Dates", "9–20 November 2026"],
+      ["Venue", "Antalya, Türkiye"],
+      ["COP31 President", "Murat Kurum (Türkiye)"],
+      ["President of Negotiations", "Chris Bowen (Australia)"],
+      ["Leaders' Summit", "11–12 November, theme “Towards a Sustainable, Resilient and Equitable Future”"],
+      ["Rest day", "Sunday 15 November (no sessions)"],
+      ["Scheduled close", "Friday 20 November"],
+      ["Time zone", "Antalya time, UTC+3"]
+    ],
+    "source": "https://unfccc.int/cop31/about"
+  },
+  "keyDates": [
+    ["2026-10-27", "SB 65 Joint Note by the SB Chairs published", "https://unfccc.int/documents/661946"],
+    ["2026-11-07", "UNFCCC NDC Synthesis, BTR Synthesis and NAP Progress reports released ahead of COP31", "https://www.unfccc.int/news/un-climate-change-reports-show-paris-agreement-supporting-whole-of-economy-approaches-but-progress"],
+    ["2026-11-09", "Conference opens", "https://unfccc.int/cop31"],
+    ["2026-11-11", "Antalya Leaders' Summit, day one: opening and national statements", "https://unfccc.int/cop31/high-level#schedule-of-events"],
+    ["2026-11-12", "Antalya Leaders' Summit, day two", "https://unfccc.int/cop31/high-level#schedule-of-events"],
+    ["2026-11-15", "Rest day: “A Breath in Antalya” social and cultural programme", "https://whatthecop.com/days/15-november"],
+    ["2026-11-17", "Resumed High-Level Segment begins (17–18 Nov)", "https://unfccc.int/cop31/high-level"],
+    ["2026-11-20", "Final negotiations: scheduled closing day", "https://whatthecop.com/days/20-november"]
+  ],
+  "themes": {
+    "2026-11-09": ["Food, Agriculture and Health", "Conference opens"],
+    "2026-11-10": ["Energy and Transport", ""],
+    "2026-11-11": ["Zero Waste", "Leaders' Summit, day one"],
+    "2026-11-12": ["Resilient Cities and Built Environment", "Leaders' Summit, day two"],
+    "2026-11-13": ["Finance and Trade", ""],
+    "2026-11-14": ["Children, Youth, Education and Skills", ""],
+    "2026-11-15": ["A Breath in Antalya", "Rest day: social and cultural programme"],
+    "2026-11-16": ["Science, Industry and Technology", ""],
+    "2026-11-17": ["Ocean, Seas, Nature and Land Use", ""],
+    "2026-11-18": ["Human and Social Development", ""],
+    "2026-11-19": ["İmece: Enhancing Implementation", "İmece is the Turkish word for collective work"],
+    "2026-11-20": ["Final Negotiations", "Scheduled closing day"]
+  },
+  "negotiations": [
+    ["Money", "Who pays to help poorer countries deal with climate change?", "COP30 set up a two-year work programme on what rich countries owe. Bonn could not agree how to run it, so COP31 has to.", "https://whatthecop.com/negotiations/climate-finance"],
+    ["Adapting", "How do we know if the world is protecting itself from climate impacts?", "COP30 agreed 59 voluntary indicators. Bonn could not agree how to use them; COP31 picks up the unfinished text.", "https://whatthecop.com/negotiations/adaptation"],
+    ["Workers", "How do we protect workers and communities as the world moves off fossil fuels?", "COP30 agreed a mechanism should exist. Bonn produced a list of possible elements; COP31 has to decide what it does and who runs it.", "https://whatthecop.com/negotiations/just-transition"],
+    ["Cutting emissions", "Should countries keep their joint programme for cutting emissions faster?", "The joint programme was set up to run until 2026. Bonn could not agree whether to keep it; COP31 decides.", "https://whatthecop.com/negotiations/cutting-emissions"],
+    ["Carbon markets", "Can a country pay another to cut emissions for it?", "The rules are written. COP31 looks at how they work in practice.", "https://whatthecop.com/negotiations/carbon-markets"],
+    ["Loss and damage", "Who pays when a climate disaster has already happened?", "The fund exists and has opened its first call. COP31 gives it guidance; the money is far short of the requests.", "https://whatthecop.com/negotiations/loss-and-damage"],
+    ["Checking progress", "Are countries using the 2023 global check-up in their climate plans?", "Each year countries check whether the 2023 stocktake shapes their plans. The next full stocktake ends in 2028.", "https://whatthecop.com/negotiations/global-stocktake"],
+    ["Climate plans", "Should there be clearer rules for what goes into national climate plans?", "Common features for national plans have been postponed for years. The question is back on the agenda.", "https://whatthecop.com/negotiations/climate-plans"]
+  ],
+  "links": [
+    ["Official", [
+      ["COP31 conference page", "https://unfccc.int/cop31"],
+      ["Meetings at a glance (live daily schedule)", "https://unfccc.int/cop31/meetings-at-a-glance"],
+      ["COP31 overview schedule", "https://unfccc.int/documents/660519"],
+      ["Antalya Leaders' Summit", "https://unfccc.int/cop31/high-level"],
+      ["Information to participants (A–Z)", "https://unfccc.int/cop31/ifp"],
+      ["How to register", "https://unfccc.int/cop31/ifp#Registration"],
+      ["Visa information", "https://unfccc.int/cop31/ifp#Visas"],
+      ["Transport", "https://unfccc.int/cop31/ifp#Transport"],
+      ["Host country site (cop31.tr)", "https://cop31.tr/"],
+      ["Digital platform (virtual participation)", "https://unfccc.int/cop31/virtual-meeting-platform"]
+    ]],
+    ["Negotiation documents", [
+      ["COP 31 session page", "https://unfccc.int/event/cop-31"],
+      ["CMA 8 session page", "https://unfccc.int/event/cma-8"],
+      ["CMP 21 session page", "https://unfccc.int/event/cmp-21"],
+      ["SBSTA 65 session page", "https://unfccc.int/event/sbsta-65"],
+      ["SBI 65 session page", "https://unfccc.int/event/sbi-65"],
+      ["COP 31 provisional agenda", "https://unfccc.int/documents/660055"],
+      ["COP 31 supplementary provisional agenda", "https://unfccc.int/documents/661867"],
+      ["SB Chairs' Joint Note", "https://unfccc.int/documents/661946"]
+    ]],
+    ["Reports and media", [
+      ["2026 NDC Synthesis Report", "https://unfccc.int/process-and-meetings/the-paris-agreement/nationally-determined-contributions-ndcs/2026-ndc-synthesis-report"],
+      ["2026 BTR Synthesis Report", "https://unfccc.int/2026-Synthesis-Report-of-Biennial-Transparency-Reports"],
+      ["NAP Progress Report", "https://unfccc.int/documents/662351"],
+      ["UN Climate Change Quarterly Update (Q3 2026)", "https://unfccc.int/about-us/reports-highlights/quarterly-updates/un-climate-change-quarterly-update-q3-2026"],
+      ["Press and media information", "https://unfccc.int/about-us/press-and-media"],
+      ["Observer daily updates", "https://unfccc.int/cop31/observer-daily-updates"]
+    ]],
+    ["Guides", [
+      ["WhatTheCOP: pavilions", "https://whatthecop.com/pavilions"],
+      ["WhatTheCOP: watch online (531 livestreams)", "https://whatthecop.com/watch"],
+      ["WhatTheCOP: venue map", "https://whatthecop.com/map"],
+      ["WhatTheCOP: field guide", "https://whatthecop.com/field-guide"],
+      ["WhatTheCOP: glossary", "https://whatthecop.com/glossary"],
+      ["Axis 1 Action Agenda timeline", "https://momomtaz.github.io/axis1-timeline/"],
+      ["Global Climate Action at COP31", "https://unfccc.int/climate-action/events/global-climate-action-at-cop/global-climate-action-at-cop-31"]
+    ]]
+  ]
+}
