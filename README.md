@@ -7,6 +7,8 @@ One searchable calendar for everything happening at COP31 (Antalya, TÃ¼rkiye, 9â
 | [UNFCCC COP31](https://unfccc.int/cop31) | The official meetings calendar (negotiations, side events, press conferences, mandated and Global Climate Action events), the Antalya Leaders' Summit schedule, key facts and official links |
 | [WhatTheCOP](https://whatthecop.com/) | The pavilion programme (4,000+ sessions with speakers, registration and livestream links), the daily themes and the eight negotiation questions |
 | [Axis 1 Action Agenda timeline](https://momomtaz.github.io/axis1-timeline/) | Action Agenda events on electrification, efficiency, fuels, transport, maritime, green industry and transition away from fossil fuels |
+| [UN Global Compact @ COP31](https://unglobalcompact.swoogo.com/un-global-compact-cop31) | UNGC-led engagements and Country Network-led sessions, with times, venues and descriptions from each session page |
+| [Luma](https://luma.com/) events | Individual events listed in `LUMA_EVENTS` in `scripts/build_data.py` (currently Australia's Transition Story networking event). Add another by pasting the code from its luma.com link |
 
 When the same event appears in more than one source it is shown once, tagged with each source.
 

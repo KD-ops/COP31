@@ -25,6 +25,8 @@
   --src-u: #1c47a6; --src-u-bg: #e3eaf9;
   --src-w: #a34d00; --src-w-bg: #fcebd9;
   --src-a: #16794a; --src-a-bg: #dcf3e6;
+  --src-g: #6a3bb0; --src-g-bg: #efe7fb;
+  --src-l: #ad2867; --src-l-bg: #fbe3ee;
   --warn: #9a3412; --warn-bg: #fde7dc;
   --gold: #8a6100; --gold-bg: #fbf0cf;
   --display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
@@ -35,14 +37,14 @@
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
   --paper: #0d131f; --surface: #151d2c; --sunk: #101826; --ink: #e5eaf3; --muted: #9aa6bb; --line: #26324a;
   --accent: #8eaaf3; --accent-soft: #1c2949; --sea: #45c6c9; --hl: #5a4a10;
-  --src-u: #9db5f6; --src-u-bg: #1c2949; --src-w: #f2ad5f; --src-w-bg: #3a2712; --src-a: #6ee0a1; --src-a-bg: #12321f;
+  --src-u: #9db5f6; --src-u-bg: #1c2949; --src-w: #f2ad5f; --src-w-bg: #3a2712; --src-a: #6ee0a1; --src-a-bg: #12321f; --src-g: #c3a5f6; --src-g-bg: #2a1d45; --src-l: #f38dbc; --src-l-bg: #3d1427;
   --warn: #fb9a6c; --warn-bg: #3d1d10; --gold: #f1c75b; --gold-bg: #3a2f0c;
   color-scheme: dark;
 } }
 :root[data-theme="dark"] {
   --paper: #0d131f; --surface: #151d2c; --sunk: #101826; --ink: #e5eaf3; --muted: #9aa6bb; --line: #26324a;
   --accent: #8eaaf3; --accent-soft: #1c2949; --sea: #45c6c9; --hl: #5a4a10;
-  --src-u: #9db5f6; --src-u-bg: #1c2949; --src-w: #f2ad5f; --src-w-bg: #3a2712; --src-a: #6ee0a1; --src-a-bg: #12321f;
+  --src-u: #9db5f6; --src-u-bg: #1c2949; --src-w: #f2ad5f; --src-w-bg: #3a2712; --src-a: #6ee0a1; --src-a-bg: #12321f; --src-g: #c3a5f6; --src-g-bg: #2a1d45; --src-l: #f38dbc; --src-l-bg: #3d1427;
   --warn: #fb9a6c; --warn-bg: #3d1d10; --gold: #f1c75b; --gold-bg: #3a2f0c;
   color-scheme: dark;
 }
@@ -82,6 +84,8 @@ nav.tabs a .n { font: 500 0.75rem var(--mono); color: var(--muted); margin-left:
 .chip.src-u[aria-pressed="true"] { border-color: var(--src-u); background: var(--src-u-bg); }
 .chip.src-w[aria-pressed="true"] { border-color: var(--src-w); background: var(--src-w-bg); }
 .chip.src-a[aria-pressed="true"] { border-color: var(--src-a); background: var(--src-a-bg); }
+.chip.src-g[aria-pressed="true"] { border-color: var(--src-g); background: var(--src-g-bg); }
+.chip.src-l[aria-pressed="true"] { border-color: var(--src-l); background: var(--src-l-bg); }
 .chip.toggle[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
 .chip.toggle[aria-pressed="false"] { text-decoration: none; opacity: 1; }
 .filters select { border: 1.5px solid var(--line); background: var(--surface); border-radius: 999px; padding: 5px 10px; font-size: 0.88rem; max-width: 220px; min-width: 0; }
@@ -116,7 +120,7 @@ main { padding-block: 16px 64px; }
 .day .cnt { font: 500 0.68rem/1 var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; }
 .bar { display: flex; height: 4px; border-radius: 2px; overflow: hidden; background: var(--line); margin-top: auto; }
 .bar i { display: block; }
-.bar .u { background: var(--src-u); } .bar .w { background: var(--src-w); } .bar .a { background: var(--src-a); }
+.bar .u { background: var(--src-u); } .bar .w { background: var(--src-w); } .bar .a { background: var(--src-a); } .bar .g { background: var(--src-g); } .bar .l { background: var(--src-l); }
 .legend { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 12px; font-size: 0.78rem; color: var(--muted); }
 .legend span { display: inline-flex; align-items: center; gap: 5px; }
 .legend i { width: 10px; height: 4px; border-radius: 2px; display: inline-block; }
@@ -140,7 +144,7 @@ main { padding-block: 16px 64px; }
 .ev { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 10px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 9px 10px 9px 12px; cursor: pointer; position: relative; content-visibility: auto; contain-intrinsic-size: auto 78px; }
 .ev:hover { border-color: color-mix(in srgb, var(--accent) 50%, var(--line)); }
 .ev::before { content: ""; position: absolute; left: -1px; top: 8px; bottom: 8px; width: 3px; border-radius: 0 3px 3px 0; background: var(--c, var(--line)); }
-.ev.s-u { --c: var(--src-u); } .ev.s-w { --c: var(--src-w); } .ev.s-a { --c: var(--src-a); }
+.ev.s-u { --c: var(--src-u); } .ev.s-w { --c: var(--src-w); } .ev.s-a { --c: var(--src-a); } .ev.s-g { --c: var(--src-g); } .ev.s-l { --c: var(--src-l); }
 .ev.dim { opacity: 0.62; }
 .ev.cancel .t { text-decoration: line-through; }
 .ev .t { font-weight: 700; line-height: 1.3; min-width: 0; overflow-wrap: anywhere; }
@@ -155,6 +159,8 @@ main { padding-block: 16px 64px; }
 .tag.u { color: var(--src-u); background: var(--src-u-bg); }
 .tag.w { color: var(--src-w); background: var(--src-w-bg); }
 .tag.a { color: var(--src-a); background: var(--src-a-bg); }
+.tag.g { color: var(--src-g); background: var(--src-g-bg); }
+.tag.l { color: var(--src-l); background: var(--src-l-bg); }
 .tag.flag { color: var(--muted); background: var(--sunk); }
 .tag.live { color: var(--sea); background: color-mix(in srgb, var(--sea) 14%, transparent); }
 .tag.lead { color: var(--gold); background: var(--gold-bg); }
@@ -295,8 +301,13 @@ footer.foot { border-top: 1px solid var(--line); padding-block: 18px 28px; color
   var SRC = {
     u: { short: "UNFCCC", name: "UNFCCC official" },
     w: { short: "WhatTheCOP", name: "WhatTheCOP" },
-    a: { short: "Axis 1", name: "Axis 1 Action Agenda" }
+    a: { short: "Axis 1", name: "Axis 1 Action Agenda" },
+    g: { short: "UN Global Compact", name: "UN Global Compact" },
+    l: { short: "Luma", name: "Luma events" }
   };
+  var KEYS = Object.keys(SRC);
+  function allSrc() { var o = {}; KEYS.forEach(function (k) { o[k] = true; }); return o; }
+  function zeroSrc() { var o = { n: 0 }; KEYS.forEach(function (k) { o[k] = 0; }); return o; }
   var CONF_START = "2026-11-09", CONF_END = "2026-11-20";
   var DOW = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   var FLAG = {
@@ -308,7 +319,7 @@ footer.foot { border-top: 1px solid var(--line); padding-block: 18px 28px; color
 
   var DATA = null, INFO = null, EVENTS = [], BY_ID = {};
   var state = {
-    view: "calendar", q: "", src: { u: true, w: true, a: true }, zone: "", kind: "", topic: "", org: "",
+    view: "calendar", q: "", src: allSrc(), zone: "", kind: "", topic: "", org: "",
     live: false, hideTent: false, day: CONF_START, listLimit: PAGE
   };
   var shortlist = loadShort();
@@ -398,7 +409,7 @@ footer.foot { border-top: 1px solid var(--line); padding-block: 18px 28px; color
 
   // ---------------------------------------------------------------- filters bar
   function buildFilters() {
-    var counts = { u: 0, w: 0, a: 0 }, zones = {}, kinds = {}, topics = {}, orgs = {};
+    var counts = zeroSrc(), zones = {}, kinds = {}, topics = {}, orgs = {};
     EVENTS.forEach(function (e) {
       e.s.forEach(function (s) { counts[s]++; });
       var z = e.z || "Location TBC"; zones[z] = (zones[z] || 0) + 1;
@@ -413,7 +424,7 @@ footer.foot { border-top: 1px solid var(--line); padding-block: 18px 28px; color
         .map(function (k) { return '<option value="' + esc(k) + '">' + esc(k) + " (" + obj[k] + ")</option>"; }).join("");
     }
     var h = "";
-    ["u", "w", "a"].forEach(function (s) {
+    KEYS.forEach(function (s) {
       h += '<button type="button" class="chip src-' + s + '" data-src="' + s + '" aria-pressed="' + state.src[s] + '"><span class="dot" style="background:var(--src-' + s + ')"></span>' + SRC[s].name + ' <span class="n">' + counts[s] + "</span></button>";
     });
     h += '<span class="sep"></span>';
@@ -429,11 +440,11 @@ footer.foot { border-top: 1px solid var(--line); padding-block: 18px 28px; color
   }
 
   function syncFilters() {
-    ["u", "w", "a"].forEach(function (s) { $('[data-src="' + s + '"]').setAttribute("aria-pressed", state.src[s]); });
+    KEYS.forEach(function (s) { $('[data-src="' + s + '"]').setAttribute("aria-pressed", state.src[s]); });
     $("#f-zone").value = state.zone; $("#f-kind").value = state.kind; $("#f-topic").value = state.topic;
     var fo = $("#f-org"); if (document.activeElement !== fo && fo.value !== state.org) fo.value = state.org; fo.classList.toggle("on", !!state.org);
     $("#f-live").setAttribute("aria-pressed", state.live); $("#f-tent").setAttribute("aria-pressed", state.hideTent);
-    var dirty = state.zone || state.kind || state.topic || state.org || state.live || state.hideTent || !state.src.u || !state.src.w || !state.src.a;
+    var dirty = state.zone || state.kind || state.topic || state.org || state.live || state.hideTent || KEYS.some(function (k) { return !state.src[k]; });
     $("#f-reset").hidden = !dirty;
     $("#qclear").hidden = !state.q;
   }
@@ -453,24 +464,24 @@ footer.foot { border-top: 1px solid var(--line); padding-block: 18px 28px; color
     var perDay = {}, undated = 0;
     list.forEach(function (e) {
       if (!e.d) { undated++; return; }
-      var p = perDay[e.d] || (perDay[e.d] = { n: 0, u: 0, w: 0, a: 0 });
+      var p = perDay[e.d] || (perDay[e.d] = zeroSrc());
       p.n++; p[e.s[0]]++;
     });
     var max = 1; Object.keys(perDay).forEach(function (d) { max = Math.max(max, perDay[d].n); });
     var gridStart = "2026-11-02", cells = "";
     for (var i = 0; i < 21; i++) {
-      var d = addDays(gridStart, i), p = perDay[d] || { n: 0, u: 0, w: 0, a: 0 };
+      var d = addDays(gridStart, i), p = perDay[d] || zeroSrc();
       var conf = d >= CONF_START && d <= CONF_END;
       var th = INFO.themes[d];
       var bar = p.n ? '<span class="bar" style="width:' + Math.max(12, Math.round(100 * p.n / max)) + '%">' +
-        ["u", "w", "a"].map(function (s) { return p[s] ? '<i class="' + s + '" style="flex:' + p[s] + '"></i>' : ""; }).join("") + "</span>" : '<span class="bar" style="width:0"></span>';
+        KEYS.map(function (s) { return p[s] ? '<i class="' + s + '" style="flex:' + p[s] + '"></i>' : ""; }).join("") + "</span>" : '<span class="bar" style="width:0"></span>';
       cells += '<button type="button" class="day' + (conf ? " conf" : "") + (p.n ? "" : " empty") + '" data-day="' + d + '" aria-pressed="' + (d === state.day) + '" title="' + esc(fmtDay(d, true) + (th ? " · " + th[0] : "")) + '" aria-label="' + esc(fmtDay(d, true) + ", " + p.n + " events") + '">' +
         '<span class="num">' + dateObj(d).getUTCDate() + "</span><span class=\"cnt\">" + (p.n ? p.n : "–") + "</span>" + bar + "</button>";
     }
     var month = '<aside class="month"><h2>November 2026 <small>Mon–Sun</small></h2>' +
       '<div class="dow">' + DOW.map(function (d) { return "<div>" + d + "</div>"; }).join("") + "</div>" +
       '<div class="grid">' + cells + "</div>" +
-      '<div class="legend"><span><i style="background:var(--src-u)"></i>UNFCCC</span><span><i style="background:var(--src-w)"></i>WhatTheCOP</span><span><i style="background:var(--src-a)"></i>Axis 1</span><span>Shaded = conference days</span></div>' +
+      '<div class="legend">' + KEYS.map(function (k) { return '<span><i style="background:var(--src-' + k + ')"></i>' + SRC[k].short + "</span>"; }).join("") + "<span>Shaded = conference days</span></div>" +
       (undated ? '<div class="undated"><button type="button" data-day="">' + undated + " event" + (undated === 1 ? "" : "s") + " with no date yet →</button></div>" : "") +
       "</aside>";
 
@@ -535,8 +546,8 @@ footer.foot { border-top: 1px solid var(--line); padding-block: 18px 28px; color
       }).join("") + "</div></section>";
     h += '<section><h2>Useful links</h2><p class="lede">Registration, documents, reports and guides.</p><div class="linkcols">' +
       INFO.links.map(function (g) { return "<div><h3>" + esc(g[0]) + "</h3><ul>" + g[1].map(function (l) { return '<li><a href="' + esc(l[1]) + '" target="_blank" rel="noopener">' + esc(l[0]) + "</a></li>"; }).join("") + "</ul></div>"; }).join("") + "</div></section>";
-    h += '<section><h2>Where this comes from</h2><p class="lede">Events are pulled from three public sources and merged. When the same event appears in more than one, it is shown once with every source tagged.</p><div class="srcs">' +
-      ["u", "w", "a"].map(function (s) {
+    h += '<section><h2>Where this comes from</h2><p class="lede">Events are pulled from these public sources and merged. When the same event appears in more than one, it is shown once with every source tagged.</p><div class="srcs">' +
+      KEYS.filter(function (s) { return DATA.sources[s]; }).map(function (s) {
         var m = DATA.sources[s];
         return '<div><b>' + esc(m.name) + "</b><small>" + m.count.toLocaleString() + " records" + (m.updated ? " · source updated " + esc(String(m.updated).slice(0, 16).replace("T", " ")) : "") + '</small><a href="' + esc(m.url) + '" target="_blank" rel="noopener">' + esc(m.url.replace(/^https:\/\//, "")) + "</a></div>";
       }).join("") + "</div>" +
@@ -663,10 +674,10 @@ footer.foot { border-top: 1px solid var(--line); padding-block: 18px 28px; color
 
     $("#filters").addEventListener("click", function (ev) {
       var b = ev.target.closest("button"); if (!b) return;
-      if (b.dataset.src) { state.src[b.dataset.src] = !state.src[b.dataset.src]; if (!state.src.u && !state.src.w && !state.src.a) state.src[b.dataset.src] = true; }
+      if (b.dataset.src) { state.src[b.dataset.src] = !state.src[b.dataset.src]; if (!KEYS.some(function (k) { return state.src[k]; })) state.src[b.dataset.src] = true; }
       else if (b.id === "f-live") state.live = !state.live;
       else if (b.id === "f-tent") state.hideTent = !state.hideTent;
-      else if (b.id === "f-reset") { state.src = { u: true, w: true, a: true }; state.zone = state.kind = state.topic = ""; setOrg(""); state.live = state.hideTent = false; }
+      else if (b.id === "f-reset") { state.src = allSrc(); state.zone = state.kind = state.topic = ""; setOrg(""); state.live = state.hideTent = false; }
       state.listLimit = PAGE; render();
     });
     var oT;
@@ -732,7 +743,7 @@ footer.foot { border-top: 1px solid var(--line); padding-block: 18px 28px; color
     state.day = today >= "2026-11-02" && today <= "2026-11-22" && today >= CONF_START ? today : CONF_START;
     var gen = new Date(DATA.generated);
     $("#meta").textContent = "9–20 November 2026 · Antalya, Türkiye · " + EVENTS.length.toLocaleString() + " events · all times Antalya (UTC+3)";
-    $("#foot").innerHTML = "Combines the <a href=\"https://unfccc.int/cop31\" target=\"_blank\" rel=\"noopener\">UNFCCC COP31</a> official schedule, the <a href=\"https://whatthecop.com/\" target=\"_blank\" rel=\"noopener\">WhatTheCOP</a> programme and the <a href=\"https://momomtaz.github.io/axis1-timeline/\" target=\"_blank\" rel=\"noopener\">Axis 1 Action Agenda timeline</a>. Data refreshed " +
+    $("#foot").innerHTML = "Combines the <a href=\"https://unfccc.int/cop31\" target=\"_blank\" rel=\"noopener\">UNFCCC COP31</a> official schedule, the <a href=\"https://whatthecop.com/\" target=\"_blank\" rel=\"noopener\">WhatTheCOP</a> programme, the <a href=\"https://momomtaz.github.io/axis1-timeline/\" target=\"_blank\" rel=\"noopener\">Axis 1 Action Agenda timeline</a>, the <a href=\"https://unglobalcompact.swoogo.com/un-global-compact-cop31\" target=\"_blank\" rel=\"noopener\">UN Global Compact @ COP31</a> agenda and selected Luma events. Data refreshed " +
       esc(gen.toLocaleString("en-AU", { dateStyle: "medium", timeStyle: "short", timeZone: "Europe/Istanbul" })) + " Antalya time. Unofficial; confirm details with each source. Press <kbd>/</kbd> to search.";
     buildFilters();
     bind();

@@ -7,6 +7,8 @@ Pulls and merges four public sources into one searchable event list:
      plus the Antalya Leaders' Summit schedule from unfccc.int/cop31/high-level
   w  WhatTheCOP programme (whatthecop.com/programme): pavilion sessions
   a  Action Agenda Axis 1 timeline (momomtaz.github.io/axis1-timeline)
+  g  UN Global Compact @ COP31 agenda (unglobalcompact.swoogo.com/un-global-compact-cop31)
+  l  Individual Luma event pages listed in LUMA_EVENTS
 
 Usage:
   python3 scripts/build_data.py            # fetch live and write data/events.json
@@ -22,6 +24,7 @@ import json
 import os
 import re
 import sys
+import urllib.parse
 import urllib.request
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -32,16 +35,24 @@ URLS = {
     "unfccc_feed": "https://unfcccstagresprd01.blob.core.windows.net/$web/meetings_102_full.json",
     "wtc_programme": "https://whatthecop.com/programme",
     "axis": "https://momomtaz.github.io/axis1-timeline/",
+    "ungc": "https://unglobalcompact.swoogo.com/un-global-compact-cop31",
 }
+UNGC_BASE = "https://unglobalcompact.swoogo.com"
+
+# Luma events to include: add the code at the end of any luma.com/<code> link.
+LUMA_EVENTS = [
+    "6nwbyvd8",  # Australia's Transition Story: Networking Event (Edge Impact, Intrepid, UNGC Network Australia)
+]
 
 # ----------------------------------------------------------------- fetching
 
-def fetch(key, cache):
-    path = os.path.join(cache, key) if cache else None
+def fetch(key, cache, url=None):
+    path = os.path.join(cache, re.sub(r"[^A-Za-z0-9_.-]", "_", key)) if cache else None
     if path and os.path.exists(path):
         with open(path, encoding="utf-8") as f:
             return f.read()
-    req = urllib.request.Request(URLS[key], headers={"User-Agent": UA})
+    target = urllib.parse.quote(url or URLS[key], safe=":/?=&%#$")
+    req = urllib.request.Request(target, headers={"User-Agent": UA})
     with urllib.request.urlopen(req, timeout=120) as r:
         body = r.read().decode("utf-8", errors="replace")
     if path:
@@ -243,6 +254,114 @@ def axis(raw):
         })
     return out, (upd.group(1) if upd else None)
 
+# ----------------------------------------------------------------- UN Global Compact (Swoogo)
+
+def to24(t):
+    m = re.match(r"\s*(\d{1,2}):(\d\d)\s*([AP]M)", t or "", re.I)
+    if not m:
+        return ""
+    h = int(m.group(1)) % 12 + (12 if m.group(3).upper() == "PM" else 0)
+    return f"{h:02d}:{m.group(2)}"
+
+
+def no_contacts(text):
+    """Drop any sentence that carries an e-mail address."""
+    parts = re.split(r"(?<=[.!?])\s+", text)
+    return " ".join(p for p in parts if "@" not in p).strip()
+
+
+def ungc(raw, cache):
+    out = []
+    for block in re.split(r'<div class="date-wrap">', raw)[1:]:
+        dm = re.search(r'session-date title">\s*\w+, (\w+ \d{1,2}, \d{4})', block)
+        if not dm:
+            continue
+        day = dt.datetime.strptime(dm.group(1), "%B %d, %Y").date().isoformat()
+        for sm in re.finditer(r'<div class="session filter_el" data-location="([^"]*)"(.*?)</div>\s*</div>', block, re.S):
+            loc, inner = sm.group(1), sm.group(2)
+            tm = re.search(r'session-time">([^<]*)<', inner)
+            am = re.search(r'<a class="show-details" href="([^"]+)">(.*?)</a>', inner, re.S)
+            nm = am.group(2) if am else (re.search(r'class="title name">(.*?)</div>', inner, re.S) or [None, ""])[1]
+            title = clean(nm)
+            if not title:
+                continue
+            st, en, desc, venue = to24(tm.group(1) if tm else ""), "", "", loc.title()
+            link = UNGC_BASE + am.group(1) if am else URLS["ungc"]
+            if am:
+                try:
+                    det = fetch("ungc_" + am.group(1).split("/session/")[1].split("/")[0], cache, link)
+                    def field(name):
+                        f = re.search(r'more-info-data field-' + name + r'[^"]*">(.*?)</div>', det, re.S)
+                        return clean(f.group(1)) if f else ""
+                    times = field("times_with_timezone")
+                    tt = re.findall(r"\d{1,2}:\d\d\s*[AP]M", times, re.I)
+                    if tt:
+                        st = to24(tt[0])
+                        en = to24(tt[1]) if len(tt) > 1 else ""
+                    desc = field("description")
+                    venue = field("location") or venue
+                except Exception as err:  # keep the list entry even if a detail page fails
+                    print(f"UNGC detail failed for {title[:40]}: {err}", file=sys.stderr)
+            org = "UN Global Compact"
+            hm = re.search(r"hosted by ([^.;,(]+?)(?:\.|;|,|\(| in partnership| in collaboration| and is | together | with |$)", desc, re.I)
+            if hm:
+                org = re.sub(r"\bCNs?\b", "UN Global Compact Network", hm.group(1).strip())
+            low = (venue or "").lower()
+            zone = "Blue Zone" if "blue zone" in low else "Green Zone" if "green zone" in low else ""
+            flags = ["closed"] if title.lower().startswith("closed meeting") else []
+            out.append({
+                "id": "g" + (am.group(1).split("/session/")[1].split("/")[0] if am else str(abs(hash(title)) % 10**8)),
+                "s": ["g"], "t": title, "d": day, "st": st, "en": en, "v": venue, "z": zone,
+                "k": "UN Global Compact", "o": org, "sp": "", "x": no_contacts(desc),
+                "tp": ["UN Global Compact"], "l": {"src": link}, "f": flags,
+            })
+    return out
+
+# ----------------------------------------------------------------- Luma
+
+def prose(node):
+    """Flatten Luma's rich-text document into plain paragraphs."""
+    if isinstance(node, dict):
+        if node.get("type") == "text":
+            return node.get("text", "")
+        inner = "".join(prose(c) for c in node.get("content", []))
+        return inner + ("\n" if node.get("type") in ("paragraph", "heading", "listItem") else "")
+    if isinstance(node, list):
+        return "".join(prose(c) for c in node)
+    return ""
+
+
+def luma(cache):
+    from zoneinfo import ZoneInfo
+    out = []
+    for code in LUMA_EVENTS:
+        url = f"https://luma.com/{code}"
+        try:
+            raw = fetch("luma_" + code, cache, url)
+            nd = json.loads(re.search(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', raw, re.S).group(1))
+            data = nd["props"]["pageProps"]["initialData"]["data"]
+        except Exception as err:
+            print(f"Luma {code} failed: {err}", file=sys.stderr)
+            continue
+        ev = data["event"]
+        tz = ZoneInfo(ev.get("timezone") or "Europe/Istanbul")
+        def local(ts):
+            return dt.datetime.fromisoformat(ts.replace("Z", "+00:00")).astimezone(tz) if ts else None
+        s0, s1 = local(ev.get("start_at")), local(ev.get("end_at"))
+        geo = ev.get("geo_address_info") or {}
+        desc = re.sub(r"[\u200b]+", "", prose(data.get("description_mirror") or {})).strip()
+        out.append({
+            "id": "l" + code, "s": ["l"], "t": clean(ev.get("name")),
+            "d": s0.date().isoformat() if s0 else None,
+            "st": s0.strftime("%H:%M") if s0 else "", "en": s1.strftime("%H:%M") if s1 else "",
+            "v": geo.get("full_address") or geo.get("address") or "", "z": "Off-site",
+            "k": "Networking / external event",
+            "o": "; ".join(h.get("name") for h in data.get("hosts") or [] if h.get("name")),
+            "sp": "", "x": no_contacts(re.sub(r"\n{2,}", "\n", desc)),
+            "tp": ["Networking"], "l": {"src": url, "reg": url}, "f": [],
+        })
+    return out
+
 # ----------------------------------------------------------------- merge
 
 def norm(t):
@@ -253,16 +372,18 @@ def merge(events):
     """Fold events that appear in more than one source into a single record."""
     index, out = {}, []
     for ev in events:
-        keys = {norm(ev["t"])}
-        if ": " in ev["t"]:
-            keys.add(norm(ev["t"].split(": ", 1)[1]))
+        variants = [ev["t"]] + [ev["t"].split(sep, 1)[1] for sep in (": ", "| ") if sep in ev["t"]]
+        keys = {norm(v) for v in variants} | {norm(v)[:24] for v in variants if len(norm(v)) >= 24}
         keys = {(ev["d"], ev["st"], k) for k in keys if len(k) > 12}
         hit = next((index[k] for k in keys if k in index), None)
         if hit is not None and not set(ev["s"]) & set(hit["s"]):
             hit["s"] += ev["s"]
-            for k in ("v", "o", "sp", "x", "z"):
+            for k in ("v", "sp", "x", "z"):
                 if not hit[k] and ev[k]:
                     hit[k] = ev[k]
+            names = [n for n in re.split(r";\s*", hit["o"]) if n]
+            names += [n for n in re.split(r";\s*", ev["o"]) if n and n.lower() not in {x.lower() for x in names}]
+            hit["o"] = "; ".join(names)
             hit["tp"] += [t for t in ev["tp"] if t not in hit["tp"]]
             for lk, lv in ev["l"].items():
                 hit["l"].setdefault(lk if lk != "src" else "src_" + ev["s"][0], lv)
@@ -284,11 +405,13 @@ def main():
     u += leaders()
     w = wtc(fetch("wtc_programme", args.cache))
     a, a_upd = axis(fetch("axis", args.cache))
-    print(f"UNFCCC {len(u)}  WhatTheCOP {len(w)}  Axis1 {len(a)}", file=sys.stderr)
-    if min(len(u), len(w), len(a)) < 20:
+    g = ungc(fetch("ungc", args.cache), args.cache)
+    lu = luma(args.cache)
+    print(f"UNFCCC {len(u)}  WhatTheCOP {len(w)}  Axis1 {len(a)}  UNGC {len(g)}  Luma {len(lu)}", file=sys.stderr)
+    if min(len(u), len(w), len(a)) < 20 or len(g) < 5:
         sys.exit("A source returned almost nothing; refusing to overwrite data/events.json")
 
-    events = merge(u + w + a)
+    events = merge(u + w + a + g + lu)
     events.sort(key=lambda e: (e["d"] or "9999", e["st"] or "99", e["t"]))
     for e in events:  # drop empty fields to keep the file small
         for k in [k for k, v in e.items() if v in ("", [], {}, None) and k not in ("d", "s", "t")]:
@@ -300,13 +423,15 @@ def main():
             "u": {"name": "UNFCCC official", "url": "https://unfccc.int/cop31", "count": len(u), "updated": u_upd},
             "w": {"name": "WhatTheCOP", "url": "https://whatthecop.com/", "count": len(w)},
             "a": {"name": "Axis 1 Action Agenda", "url": "https://momomtaz.github.io/axis1-timeline/", "count": len(a), "updated": a_upd},
+            "g": {"name": "UN Global Compact", "url": URLS["ungc"], "count": len(g)},
+            "l": {"name": "Luma events", "url": "https://luma.com/" + LUMA_EVENTS[0] if len(LUMA_EVENTS) == 1 else "https://luma.com/", "count": len(lu)},
         },
         "events": events,
     }
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     with open(OUT, "w", encoding="utf-8") as f:
         json.dump(payload, f, ensure_ascii=False, separators=(",", ":"))
-    merged = len(u) + len(w) + len(a) - len(events)
+    merged = len(u) + len(w) + len(a) + len(g) + len(lu) - len(events)
     print(f"wrote {len(events)} events ({merged} cross-source duplicates merged) -> {OUT}", file=sys.stderr)
 
 
